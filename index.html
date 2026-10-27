@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Результаты этапов — Итоговая таблица</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  .medal-1 { background: linear-gradient(90deg, #fef3c7 0%, #fffbeb 100%); border-left: 5px solid #f59e0b; }
+  .medal-2 { background: linear-gradient(90deg, #f1f5f9 0%, #f8fafc 100%); border-left: 5px solid #94a3b8; }
+  .medal-3 { background: linear-gradient(90deg, #ffedd5 0%, #fff7ed 100%); border-left: 5px solid #ea580c; }
+  .group-tab.active { background: #2563eb !important; color: white !important; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
+  thead th { position: sticky; top: 0; z-index: 10; background: #f1f5f9; }
+  .person-row:hover { background-color: rgba(37, 99, 235, 0.04); }
+  .score-zero { color: #cbd5e1; }
+  .score-high { font-weight: 700; color: #059669; }
+  .score-low { font-weight: 700; color: #dc2626; background: #fef2f2; border-radius: 6px; }
+  .score-mid-low { color: #ea580c; font-weight: 600; }
+  .sum-cell { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+  .stage6-col { background: #f0fdf4; }
+  .stage6-header { background: #dcfce7 !important; color: #166534 !important; }
+</style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 text-slate-800 min-h-screen">
+  <header class="bg-gradient-to-r from-blue-700 via-indigo-600 to-violet-700 text-white shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+        <div>
+          <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur px-3 py-1 rounded-full text-sm font-medium mb-3">
+            <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+            5 этапов завершены · 6 этап впереди
+          </div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">Результаты этапов</h1>
+          <p class="mt-3 text-blue-100 text-lg max-w-xl">Сводная таблица баллов. Сумма пока по 5 этапам. Колонка 6 этапа готова к заполнению.</p>
+        </div>
+        <div class="flex gap-3">
+          <div class="bg-white/15 backdrop-blur-md rounded-2xl px-5 py-3 text-center min-w-[100px]">
+            <div class="text-3xl font-black">148</div>
+            <div class="text-xs text-blue-100 font-medium uppercase tracking-wider">участников</div>
+          </div>
+          <div class="bg-white/15 backdrop-blur-md rounded-2xl px-5 py-3 text-center min-w-[100px]">
+            <div class="text-3xl font-black">5<span class="text-lg opacity-70">/6</span></div>
+            <div class="text-xs text-blue-100 font-medium uppercase tracking-wider">этапов</div>
+          </div>
+          <div class="bg-white/15 backdrop-blur-md rounded-2xl px-5 py-3 text-center min-w-[100px]">
+            <div class="text-3xl font-black">8</div>
+            <div class="text-xs text-blue-100 font-medium uppercase tracking-wider">групп</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <!-- Controls -->
+    <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/50 p-4 mb-8 sticky top-3 z-30">
+      <div class="flex flex-col xl:flex-row gap-4">
+        <div class="relative flex-1 min-w-[240px]">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="search" id="search" placeholder="Поиск по фамилии или имени..." 
+                 class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-sm shadow-sm">
+        </div>
+        <div class="flex flex-wrap gap-2" id="group-tabs">
+          <button data-group="all" class="group-tab active px-4 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white transition-all hover:scale-105">Все группы</button>
+          <button data-group="Ж10" class="group-tab px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all hover:scale-105">Ж10 <span class="text-slate-400 font-normal">(18)</span></button>
+          <button data-group="Ж12" class="group-tab px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all hover:scale-105">Ж12 <span class="text-slate-400 font-normal">(11)</span></button>
+          <button data-group="ЖА" class="group-tab px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all hover:scale-105">ЖА <span class="text-slate-400 font-normal">(17)</span></button>
+          <button data-group="ЖБ" class="group-tab px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all hover:scale-105">ЖБ <span class="text-slate-400 font-normal">(17)</span></button>
+          <button data-group="М10" class="group-tab px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all hover:scale-105">М10 <span class="text-slate-400 font-normal">(20)</span></button>
+          <button data-group="М12" class="group-tab px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all hover:scale-105">М12 <span class="text-slate-400 font-normal">(13)</span></button>
+          <button data-group="МА" class="group-tab px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all hover:scale-105">МА <span class="text-slate-400 font-normal">(30)</span></button>
+          <button data-group="МБ" class="group-tab px-3.5 py-2.5 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all hover:scale-105">МБ <span class="text-slate-400 font-normal">(22)</span></button>
+        </div>
+      </div>
+      <!-- Legend -->
+      <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap gap-4 text-xs text-slate-500">
+        <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded bg-emerald-500"></span> Высокий (≥95)</span>
+        <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded bg-red-500"></span> Низкий (1–39)</span>
+        <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded bg-orange-400"></span> Средне-низкий (40–59)</span>
+        <span class="flex items-center gap-1.5"><span class="text-slate-300">—</span> Нет результата</span>
+      </div>
+    </div>
+
+    <!-- Overall leaders -->
+    <section class="mb-10">
+      <h2 class="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+        <span class="text-2xl">🏅</span> Лидеры после 5 этапов
+      </h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <div class="relative bg-white rounded-2xl shadow-md border border-slate-100 p-5 overflow-hidden group hover:shadow-xl transition-shadow">
+          <div class="absolute -right-4 -top-4 text-7xl opacity-10 group-hover:opacity-20 transition-opacity">🥇</div>
+          <div class="flex items-start justify-between mb-3">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-600">Ж12</span>
+            <span class="text-2xl">🥇</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 leading-tight mb-1 truncate" title="Попова Алиса">Попова Алиса</h3>
+          <p class="text-sm text-slate-500 mb-4">2014 г.р.</p>
+          <div class="flex items-end justify-between">
+            <div>
+              <div class="text-3xl font-black bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">489</div>
+              <div class="text-xs font-medium text-slate-400 uppercase tracking-wide">сумма (5 эт.)</div>
+            </div>
+            <div class="text-right text-xs text-slate-400 space-y-0.5">
+              <div>95 · 100 · 100</div>
+              <div>100 · 93 · <span class="text-emerald-600">—</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="relative bg-white rounded-2xl shadow-md border border-slate-100 p-5 overflow-hidden group hover:shadow-xl transition-shadow">
+          <div class="absolute -right-4 -top-4 text-7xl opacity-10 group-hover:opacity-20 transition-opacity">🥈</div>
+          <div class="flex items-start justify-between mb-3">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-600">Ж10</span>
+            <span class="text-2xl">🥈</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 leading-tight mb-1 truncate" title="Фальба Олеся">Фальба Олеся</h3>
+          <p class="text-sm text-slate-500 mb-4">2017 г.р.</p>
+          <div class="flex items-end justify-between">
+            <div>
+              <div class="text-3xl font-black bg-gradient-to-r from-slate-300 to-slate-400 bg-clip-text text-transparent">464</div>
+              <div class="text-xs font-medium text-slate-400 uppercase tracking-wide">сумма (5 эт.)</div>
+            </div>
+            <div class="text-right text-xs text-slate-400 space-y-0.5">
+              <div>82 · 100 · 83</div>
+              <div>100 · 100 · <span class="text-emerald-600">—</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="relative bg-white rounded-2xl shadow-md border border-slate-100 p-5 overflow-hidden group hover:shadow-xl transition-shadow">
+          <div class="absolute -right-4 -top-4 text-7xl opacity-10 group-hover:opacity-20 transition-opacity">🥉</div>
+          <div class="flex items-start justify-between mb-3">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-600">ЖА</span>
+            <span class="text-2xl">🥉</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 leading-tight mb-1 truncate" title="Ермолаева Анастасия">Ермолаева Анастасия</h3>
+          <p class="text-sm text-slate-500 mb-4">2011 г.р.</p>
+          <div class="flex items-end justify-between">
+            <div>
+              <div class="text-3xl font-black bg-gradient-to-r from-orange-400 to-amber-600 bg-clip-text text-transparent">462</div>
+              <div class="text-xs font-medium text-slate-400 uppercase tracking-wide">сумма (5 эт.)</div>
+            </div>
+            <div class="text-right text-xs text-slate-400 space-y-0.5">
+              <div>100 · 100 · 86</div>
+              <div>97 · 78 · <span class="text-emerald-600">—</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="relative bg-white rounded-2xl shadow-md border border-slate-100 p-5 overflow-hidden group hover:shadow-xl transition-shadow">
+          <div class="absolute -right-4 -top-4 text-7xl opacity-10 group-hover:opacity-20 transition-opacity">4</div>
+          <div class="flex items-start justify-between mb-3">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-600">МБ</span>
+            <span class="text-2xl">4</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 leading-tight mb-1 truncate" title="Матвеев Кирилл">Матвеев Кирилл</h3>
+          <p class="text-sm text-slate-500 mb-4">2012 г.р.</p>
+          <div class="flex items-end justify-between">
+            <div>
+              <div class="text-3xl font-black bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">446</div>
+              <div class="text-xs font-medium text-slate-400 uppercase tracking-wide">сумма (5 эт.)</div>
+            </div>
+            <div class="text-right text-xs text-slate-400 space-y-0.5">
+              <div>81 · 100 · 84</div>
+              <div>90 · 91 · <span class="text-emerald-600">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tables -->
+    <div id="tables-container" class="space-y-12">
+
+      <section class="group-section" data-group="Ж10">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900">Девочки ~10 лет (Ж10)</h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">18 участников</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-600">
+                  <th class="px-4 py-3.5 text-left font-bold w-14">Место</th>
+                  <th class="px-4 py-3.5 text-left font-bold min-w-[180px]">Фамилия Имя</th>
+                  <th class="px-3 py-3.5 text-center font-bold">Г.р.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">1 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">2 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">3 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">4 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">5 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold stage6-header">6 эт.</th>
+                  <th class="px-4 py-3.5 text-center font-bold bg-blue-50 text-blue-800">Сумма<br><span class="text-xs font-normal opacity-70">5 эт.</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+
+                <tr class="medal-1 person-row" data-name="фальба олеся" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥇</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Фальба Олеся</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center ">82</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">83</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">464</td>
+                </tr>
+                <tr class="medal-2 person-row" data-name="николаева руслана" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥈</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Николаева Руслана</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">99</td>
+                  <td class="px-3 py-3 text-center score-high">98</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">396</td>
+                </tr>
+                <tr class="medal-3 person-row" data-name="иванова дарья" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥉</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иванова Дарья</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">99</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">53</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">252</td>
+                </tr>
+                <tr class=" person-row" data-name="можейкина ульяна" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">4</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Можейкина Ульяна</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-mid-low">56</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">79</td>
+                  <td class="px-3 py-3 text-center ">85</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">220</td>
+                </tr>
+                <tr class=" person-row" data-name="гринчук анастасия" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">5</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Гринчук Анастасия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center ">68</td>
+                  <td class="px-3 py-3 text-center ">90</td>
+                  <td class="px-3 py-3 text-center score-mid-low">54</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">212</td>
+                </tr>
+                <tr class=" person-row" data-name="исмаилова дарья" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">6</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Исмаилова Дарья</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">70</td>
+                  <td class="px-3 py-3 text-center score-mid-low">53</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">123</td>
+                </tr>
+                <tr class=" person-row" data-name="константинова екатерина" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">7</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Константинова Екатерина</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">27</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">31</td>
+                  <td class="px-3 py-3 text-center score-low">39</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">97</td>
+                </tr>
+                <tr class=" person-row" data-name="матвеева валерия" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">8</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Матвеева Валерия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">80</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">80</td>
+                </tr>
+                <tr class=" person-row" data-name="фомина вероника" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">9</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Фомина Вероника</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center ">74</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">74</td>
+                </tr>
+                <tr class=" person-row" data-name="кравцова валерия" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">10</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Кравцова Валерия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2020</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">28</td>
+                  <td class="px-3 py-3 text-center score-mid-low">46</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">74</td>
+                </tr>
+                <tr class=" person-row" data-name="безобразова татьяна" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">11</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Безобразова Татьяна</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2019</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">68</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">68</td>
+                </tr>
+                <tr class=" person-row" data-name="рябова екатерина" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">12</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Рябова Екатерина</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2018</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">66</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">66</td>
+                </tr>
+                <tr class=" person-row" data-name="голанова елизавета" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">13</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Голанова Елизавета</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">65</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">65</td>
+                </tr>
+                <tr class=" person-row" data-name="плявина майя" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">14</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Плявина Майя</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2019</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">59</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">59</td>
+                </tr>
+                <tr class=" person-row" data-name="бирюкова влада" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">15</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Бирюкова Влада</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="доценко полина" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">16</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Доценко Полина</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2018</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="игнатенок аделина" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">17</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Игнатенок Аделина</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2018</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="игнатенок мирра" data-group="Ж10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">18</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Игнатенок Мирра</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="group-section" data-group="Ж12">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900">Девочки ~12 лет (Ж12)</h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">11 участников</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-600">
+                  <th class="px-4 py-3.5 text-left font-bold w-14">Место</th>
+                  <th class="px-4 py-3.5 text-left font-bold min-w-[180px]">Фамилия Имя</th>
+                  <th class="px-3 py-3.5 text-center font-bold">Г.р.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">1 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">2 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">3 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">4 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">5 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold stage6-header">6 эт.</th>
+                  <th class="px-4 py-3.5 text-center font-bold bg-blue-50 text-blue-800">Сумма<br><span class="text-xs font-normal opacity-70">5 эт.</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+
+                <tr class="medal-1 person-row" data-name="попова алиса" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥇</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Попова Алиса</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-high">95</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">93</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">489</td>
+                </tr>
+                <tr class="medal-2 person-row" data-name="гришмановская василиса" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥈</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Гришмановская Василиса</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center ">94</td>
+                  <td class="px-3 py-3 text-center ">62</td>
+                  <td class="px-3 py-3 text-center score-mid-low">54</td>
+                  <td class="px-3 py-3 text-center score-low">30</td>
+                  <td class="px-3 py-3 text-center ">75</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">316</td>
+                </tr>
+                <tr class="medal-3 person-row" data-name="мадар екатерина" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥉</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Мадар Екатерина</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">33</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">133</td>
+                </tr>
+                <tr class=" person-row" data-name="бабикова варвара" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">4</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Бабикова Варвара</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">100</td>
+                </tr>
+                <tr class=" person-row" data-name="быкова варвара" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">5</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Быкова Варвара</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1985</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">94</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">94</td>
+                </tr>
+                <tr class=" person-row" data-name="федорова яна" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">6</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">ФЕДОРОВА ЯНА</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">89</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">89</td>
+                </tr>
+                <tr class=" person-row" data-name="лемачко василиса" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">7</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Лемачко Василиса</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">88</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">88</td>
+                </tr>
+                <tr class=" person-row" data-name="азарёнок мария" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">8</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Азарёнок Мария</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">79</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">79</td>
+                </tr>
+                <tr class=" person-row" data-name="кравцова елена" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">9</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Кравцова Елена</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">36</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">36</td>
+                </tr>
+                <tr class=" person-row" data-name="торопыгина елизавета" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">10</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Торопыгина Елизавета</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">34</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">34</td>
+                </tr>
+                <tr class=" person-row" data-name="заблоцкая дарья" data-group="Ж12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">11</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Заблоцкая Дарья</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="group-section" data-group="ЖА">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900">Женщины группа А (ЖА)</h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">17 участников</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-600">
+                  <th class="px-4 py-3.5 text-left font-bold w-14">Место</th>
+                  <th class="px-4 py-3.5 text-left font-bold min-w-[180px]">Фамилия Имя</th>
+                  <th class="px-3 py-3.5 text-center font-bold">Г.р.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">1 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">2 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">3 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">4 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">5 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold stage6-header">6 эт.</th>
+                  <th class="px-4 py-3.5 text-center font-bold bg-blue-50 text-blue-800">Сумма<br><span class="text-xs font-normal opacity-70">5 эт.</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+
+                <tr class="medal-1 person-row" data-name="ермолаева анастасия" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥇</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Ермолаева Анастасия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2011</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">86</td>
+                  <td class="px-3 py-3 text-center score-high">97</td>
+                  <td class="px-3 py-3 text-center ">78</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">462</td>
+                </tr>
+                <tr class="medal-2 person-row" data-name="зворыкина варвара" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥈</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Зворыкина Варвара</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2009</td>
+                  <td class="px-3 py-3 text-center ">77</td>
+                  <td class="px-3 py-3 text-center ">72</td>
+                  <td class="px-3 py-3 text-center score-high">98</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">94</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">442</td>
+                </tr>
+                <tr class="medal-3 person-row" data-name="зворыкина евдокия" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥉</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Зворыкина Евдокия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2011</td>
+                  <td class="px-3 py-3 text-center ">85</td>
+                  <td class="px-3 py-3 text-center ">78</td>
+                  <td class="px-3 py-3 text-center ">69</td>
+                  <td class="px-3 py-3 text-center ">72</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">304</td>
+                </tr>
+                <tr class=" person-row" data-name="белова вероника" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">4</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Белова Вероника</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2001</td>
+                  <td class="px-3 py-3 text-center score-high">96</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">296</td>
+                </tr>
+                <tr class=" person-row" data-name="пешкова маргарита" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">5</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Пешкова Маргарита</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2002</td>
+                  <td class="px-3 py-3 text-center ">78</td>
+                  <td class="px-3 py-3 text-center score-high">96</td>
+                  <td class="px-3 py-3 text-center ">87</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">261</td>
+                </tr>
+                <tr class=" person-row" data-name="арсентьева богдана" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">6</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Арсентьева Богдана</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2009</td>
+                  <td class="px-3 py-3 text-center ">86</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">82</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">84</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">251</td>
+                </tr>
+                <tr class=" person-row" data-name="гришмановская елена" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">7</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Гришмановская Елена</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1978</td>
+                  <td class="px-3 py-3 text-center ">60</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">47</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">63</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">169</td>
+                </tr>
+                <tr class=" person-row" data-name="ушакова наталья" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">8</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Ушакова Наталья</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1955</td>
+                  <td class="px-3 py-3 text-center ">89</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">63</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">152</td>
+                </tr>
+                <tr class=" person-row" data-name="голенкина юлия" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">9</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Голенкина Юлия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1975</td>
+                  <td class="px-3 py-3 text-center ">68</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">65</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">133</td>
+                </tr>
+                <tr class=" person-row" data-name="жгун анастасия" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">10</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Жгун Анастасия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2007</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">93</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">93</td>
+                </tr>
+                <tr class=" person-row" data-name="сафончик тамара" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">11</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Сафончик Тамара</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1952</td>
+                  <td class="px-3 py-3 text-center ">82</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">82</td>
+                </tr>
+                <tr class=" person-row" data-name="степанова анастасия" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">12</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Степанова Анастасия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2008</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">81</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">81</td>
+                </tr>
+                <tr class=" person-row" data-name="вавере елена" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">13</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Вавере Елена</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1978</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">66</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">66</td>
+                </tr>
+                <tr class=" person-row" data-name="леонова олеся" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">14</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Леонова Олеся</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2001</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">62</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">62</td>
+                </tr>
+                <tr class=" person-row" data-name="сидорова анна" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">15</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Сидорова Анна</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1991</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">42</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">42</td>
+                </tr>
+                <tr class=" person-row" data-name="ярцева елена" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">16</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Ярцева Елена</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1990</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="скобелева елена" data-group="ЖА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">17</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Скобелева Елена</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1982</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="group-section" data-group="ЖБ">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900">Женщины группа Б (ЖБ)</h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">17 участников</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-600">
+                  <th class="px-4 py-3.5 text-left font-bold w-14">Место</th>
+                  <th class="px-4 py-3.5 text-left font-bold min-w-[180px]">Фамилия Имя</th>
+                  <th class="px-3 py-3.5 text-center font-bold">Г.р.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">1 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">2 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">3 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">4 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">5 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold stage6-header">6 эт.</th>
+                  <th class="px-4 py-3.5 text-center font-bold bg-blue-50 text-blue-800">Сумма<br><span class="text-xs font-normal opacity-70">5 эт.</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+
+                <tr class="medal-1 person-row" data-name="родина маргарита" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥇</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Родина Маргарита</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2010</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-mid-low">54</td>
+                  <td class="px-3 py-3 text-center ">62</td>
+                  <td class="px-3 py-3 text-center score-mid-low">41</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">357</td>
+                </tr>
+                <tr class="medal-2 person-row" data-name="перхова алиса" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥈</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Перхова Алиса</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center ">93</td>
+                  <td class="px-3 py-3 text-center ">67</td>
+                  <td class="px-3 py-3 text-center score-mid-low">46</td>
+                  <td class="px-3 py-3 text-center ">68</td>
+                  <td class="px-3 py-3 text-center ">60</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">333</td>
+                </tr>
+                <tr class="medal-3 person-row" data-name="когтева александра" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥉</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Когтева Александра</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2012</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">200</td>
+                </tr>
+                <tr class=" person-row" data-name="зайцева злата" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">4</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Зайцева Злата</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2011</td>
+                  <td class="px-3 py-3 text-center ">60</td>
+                  <td class="px-3 py-3 text-center score-mid-low">53</td>
+                  <td class="px-3 py-3 text-center score-mid-low">46</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">159</td>
+                </tr>
+                <tr class=" person-row" data-name="иванова диана" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">5</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иванова Диана</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">86</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">54</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">140</td>
+                </tr>
+                <tr class=" person-row" data-name="миронова анастасия" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">6</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Миронова Анастасия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">100</td>
+                </tr>
+                <tr class=" person-row" data-name="болбат анастасия" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">7</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Болбат Анастасия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">76</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">76</td>
+                </tr>
+                <tr class=" person-row" data-name="зворыкина ольга" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">8</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Зворыкина Ольга</td>
+                  <td class="px-3 py-3 text-center text-slate-500">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">72</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">72</td>
+                </tr>
+                <tr class=" person-row" data-name="плявина анастасия" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">9</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Плявина Анастасия</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1982</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">71</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">71</td>
+                </tr>
+                <tr class=" person-row" data-name="ермолаева анжелика" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">10</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Ермолаева Анжелика</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1987</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">68</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">68</td>
+                </tr>
+                <tr class=" person-row" data-name="мадар вера" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">11</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Мадар Вера</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1994</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">63</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">63</td>
+                </tr>
+                <tr class=" person-row" data-name="киселева наталья" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">12</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Киселева Наталья</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2012</td>
+                  <td class="px-3 py-3 text-center score-mid-low">58</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">58</td>
+                </tr>
+                <tr class=" person-row" data-name="алексеева ульяна" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">13</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">АЛЕКСЕЕВА УЛЬЯНА</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2001</td>
+                  <td class="px-3 py-3 text-center score-mid-low">55</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">55</td>
+                </tr>
+                <tr class=" person-row" data-name="денисенко елизавета" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">14</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Денисенко Елизавета</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2010</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">47</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">47</td>
+                </tr>
+                <tr class=" person-row" data-name="чистоборская екатерина" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">15</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Чистоборская Екатерина</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2000</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">46</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">46</td>
+                </tr>
+                <tr class=" person-row" data-name="луканидина мария" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">16</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Луканидина Мария</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1980</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">39</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">39</td>
+                </tr>
+                <tr class=" person-row" data-name="назарян ольга" data-group="ЖБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">17</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Назарян Ольга</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1958</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="group-section" data-group="М10">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900">Мальчики ~10 лет (М10)</h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">20 участников</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-600">
+                  <th class="px-4 py-3.5 text-left font-bold w-14">Место</th>
+                  <th class="px-4 py-3.5 text-left font-bold min-w-[180px]">Фамилия Имя</th>
+                  <th class="px-3 py-3.5 text-center font-bold">Г.р.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">1 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">2 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">3 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">4 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">5 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold stage6-header">6 эт.</th>
+                  <th class="px-4 py-3.5 text-center font-bold bg-blue-50 text-blue-800">Сумма<br><span class="text-xs font-normal opacity-70">5 эт.</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+
+                <tr class="medal-1 person-row" data-name="алексеев никита" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥇</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Алексеев Никита</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-high">95</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">73</td>
+                  <td class="px-3 py-3 text-center ">63</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">431</td>
+                </tr>
+                <tr class="medal-2 person-row" data-name="алексеев иван" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥈</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Алексеев Иван</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2018</td>
+                  <td class="px-3 py-3 text-center ">85</td>
+                  <td class="px-3 py-3 text-center score-high">98</td>
+                  <td class="px-3 py-3 text-center ">81</td>
+                  <td class="px-3 py-3 text-center ">84</td>
+                  <td class="px-3 py-3 text-center ">74</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">421</td>
+                </tr>
+                <tr class="medal-3 person-row" data-name="зворыкин андрей" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥉</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Зворыкин Андрей</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center ">91</td>
+                  <td class="px-3 py-3 text-center ">68</td>
+                  <td class="px-3 py-3 text-center ">67</td>
+                  <td class="px-3 py-3 text-center ">83</td>
+                  <td class="px-3 py-3 text-center ">75</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">383</td>
+                </tr>
+                <tr class=" person-row" data-name="арсентьев дмитрий" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">4</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Арсентьев Дмитрий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">85</td>
+                  <td class="px-3 py-3 text-center ">76</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">361</td>
+                </tr>
+                <tr class=" person-row" data-name="масляков владислав" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">5</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Масляков Владислав</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-high">95</td>
+                  <td class="px-3 py-3 text-center ">79</td>
+                  <td class="px-3 py-3 text-center ">65</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">339</td>
+                </tr>
+                <tr class=" person-row" data-name="вавере лука" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">6</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Вавере Лука</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center ">83</td>
+                  <td class="px-3 py-3 text-center ">72</td>
+                  <td class="px-3 py-3 text-center ">78</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">233</td>
+                </tr>
+                <tr class=" person-row" data-name="рытиков всемир" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">7</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Рытиков Всемир</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">82</td>
+                  <td class="px-3 py-3 text-center ">69</td>
+                  <td class="px-3 py-3 text-center ">72</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">224</td>
+                </tr>
+                <tr class=" person-row" data-name="белов арсений" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">8</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Белов Арсений</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center ">74</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">67</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">141</td>
+                </tr>
+                <tr class=" person-row" data-name="мадар михаил" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">9</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Мадар Михаил</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2020</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">65</td>
+                  <td class="px-3 py-3 text-center ">63</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">128</td>
+                </tr>
+                <tr class=" person-row" data-name="каллас тимофей" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">10</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Каллас Тимофей</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">55</td>
+                  <td class="px-3 py-3 text-center ">69</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">124</td>
+                </tr>
+                <tr class=" person-row" data-name="рытиков назаре" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">11</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Рытиков Назаре</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2019</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">29</td>
+                  <td class="px-3 py-3 text-center ">78</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">107</td>
+                </tr>
+                <tr class=" person-row" data-name="шишлов дмитрий" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">12</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Шишлов Дмитрий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center ">91</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">91</td>
+                </tr>
+                <tr class=" person-row" data-name="федоров юрий" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">13</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">ФЕДОРОВ ЮРИЙ</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2018</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">84</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">84</td>
+                </tr>
+                <tr class=" person-row" data-name="мадар егор" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">14</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Мадар Егор</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2016</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">78</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">78</td>
+                </tr>
+                <tr class=" person-row" data-name="ярмош андрей" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">15</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Ярмош Андрей</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2020</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">70</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">70</td>
+                </tr>
+                <tr class=" person-row" data-name="перхов даарий" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">16</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Перхов Даарий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2021</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">51</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">51</td>
+                </tr>
+                <tr class=" person-row" data-name="симонов григорий" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">17</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Симонов Григорий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">46</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">46</td>
+                </tr>
+                <tr class=" person-row" data-name="галстян кирилл" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">18</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Галстян Кирилл</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">37</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">37</td>
+                </tr>
+                <tr class=" person-row" data-name="рыжик" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">19</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Рыжик</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2017</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="рыжов максим" data-group="М10">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">20</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Рыжов Максим</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2020</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="group-section" data-group="М12">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900">Мальчики ~12 лет (М12)</h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">13 участников</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-600">
+                  <th class="px-4 py-3.5 text-left font-bold w-14">Место</th>
+                  <th class="px-4 py-3.5 text-left font-bold min-w-[180px]">Фамилия Имя</th>
+                  <th class="px-3 py-3.5 text-center font-bold">Г.р.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">1 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">2 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">3 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">4 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">5 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold stage6-header">6 эт.</th>
+                  <th class="px-4 py-3.5 text-center font-bold bg-blue-50 text-blue-800">Сумма<br><span class="text-xs font-normal opacity-70">5 эт.</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+
+                <tr class="medal-1 person-row" data-name="алексеев василий" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥇</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Алексеев Василий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">65</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">265</td>
+                </tr>
+                <tr class="medal-2 person-row" data-name="шарков дмитрий" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥈</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Шарков Дмитрий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">91</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">191</td>
+                </tr>
+                <tr class="medal-3 person-row" data-name="новский михаил" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥉</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Новский Михаил</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">53</td>
+                  <td class="px-3 py-3 text-center score-mid-low">41</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">85</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">180</td>
+                </tr>
+                <tr class=" person-row" data-name="белоусов артем" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">4</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Белоусов Артем</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center ">90</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">85</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">175</td>
+                </tr>
+                <tr class=" person-row" data-name="кузнецов антон" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">5</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Кузнецов Антон</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-mid-low">49</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">42</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">46</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">137</td>
+                </tr>
+                <tr class=" person-row" data-name="кошелев михаил" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">6</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Кошелев Михаил</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">100</td>
+                </tr>
+                <tr class=" person-row" data-name="лукашевич михаил" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">7</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Лукашевич Михаил</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">100</td>
+                </tr>
+                <tr class=" person-row" data-name="плявин захар" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">8</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Плявин Захар</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">89</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">89</td>
+                </tr>
+                <tr class=" person-row" data-name="никитенко владислав" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">9</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Никитенко Владислав</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2014</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">62</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">62</td>
+                </tr>
+                <tr class=" person-row" data-name="осипенко степан" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">10</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Осипенко Степан</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">44</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">44</td>
+                </tr>
+                <tr class=" person-row" data-name="большаков павел" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">11</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Большаков Павел</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">42</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">42</td>
+                </tr>
+                <tr class=" person-row" data-name="дубнин александр" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">12</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Дубнин Александр</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="иголкин степан" data-group="М12">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">13</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иголкин Степан</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="group-section" data-group="МА">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900">Мужчины группа А (МА)</h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">30 участников</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-600">
+                  <th class="px-4 py-3.5 text-left font-bold w-14">Место</th>
+                  <th class="px-4 py-3.5 text-left font-bold min-w-[180px]">Фамилия Имя</th>
+                  <th class="px-3 py-3.5 text-center font-bold">Г.р.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">1 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">2 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">3 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">4 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">5 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold stage6-header">6 эт.</th>
+                  <th class="px-4 py-3.5 text-center font-bold bg-blue-50 text-blue-800">Сумма<br><span class="text-xs font-normal opacity-70">5 эт.</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+
+                <tr class="medal-1 person-row" data-name="иванов николай" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥇</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иванов Николай</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1986</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">94</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">99</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">393</td>
+                </tr>
+                <tr class="medal-2 person-row" data-name="мартынов сергей" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥈</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Мартынов Сергей</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1971</td>
+                  <td class="px-3 py-3 text-center ">92</td>
+                  <td class="px-3 py-3 text-center ">75</td>
+                  <td class="px-3 py-3 text-center ">68</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">73</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">309</td>
+                </tr>
+                <tr class="medal-3 person-row" data-name="иванов егор николаевич" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥉</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иванов Егор Николаевич</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1985</td>
+                  <td class="px-3 py-3 text-center ">85</td>
+                  <td class="px-3 py-3 text-center ">74</td>
+                  <td class="px-3 py-3 text-center score-mid-low">58</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">84</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">301</td>
+                </tr>
+                <tr class=" person-row" data-name="ермолаев артём" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">4</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Ермолаев Артём</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2005</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">300</td>
+                </tr>
+                <tr class=" person-row" data-name="добродеев александр" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">5</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Добродеев Александр</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1963</td>
+                  <td class="px-3 py-3 text-center ">76</td>
+                  <td class="px-3 py-3 text-center ">65</td>
+                  <td class="px-3 py-3 text-center ">62</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">41</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">244</td>
+                </tr>
+                <tr class=" person-row" data-name="прокофьев дмитрий" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">6</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Прокофьев Дмитрий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1996</td>
+                  <td class="px-3 py-3 text-center ">81</td>
+                  <td class="px-3 py-3 text-center ">71</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">86</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">238</td>
+                </tr>
+                <tr class=" person-row" data-name="попов павел" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">7</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Попов Павел</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1980</td>
+                  <td class="px-3 py-3 text-center ">71</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">57</td>
+                  <td class="px-3 py-3 text-center score-mid-low">48</td>
+                  <td class="px-3 py-3 text-center score-low">39</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">216</td>
+                </tr>
+                <tr class=" person-row" data-name="каштанов вадим" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">8</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Каштанов Вадим</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1983</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">91</td>
+                  <td class="px-3 py-3 text-center score-high">97</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">188</td>
+                </tr>
+                <tr class=" person-row" data-name="антипов евгений" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">9</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Антипов Евгений</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1979</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">81</td>
+                  <td class="px-3 py-3 text-center ">78</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">159</td>
+                </tr>
+                <tr class=" person-row" data-name="белоусов александр" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">10</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Белоусов Александр</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1981</td>
+                  <td class="px-3 py-3 text-center ">71</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">74</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">145</td>
+                </tr>
+                <tr class=" person-row" data-name="рытиков север" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">11</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Рытиков Север</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2011</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">47</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">57</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">105</td>
+                </tr>
+                <tr class=" person-row" data-name="никитин павел" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">12</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Никитин Павел</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2004</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">96</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">96</td>
+                </tr>
+                <tr class=" person-row" data-name="лемачко андрей" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">13</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Лемачко Андрей</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1985</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">82</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">82</td>
+                </tr>
+                <tr class=" person-row" data-name="федоришкин александр" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">14</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Федоришкин Александр</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1988</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">80</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">80</td>
+                </tr>
+                <tr class=" person-row" data-name="подагель савелий" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">15</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Подагель Савелий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2009</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">67</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">67</td>
+                </tr>
+                <tr class=" person-row" data-name="ушаков александр" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">16</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Ушаков Александр</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1991</td>
+                  <td class="px-3 py-3 text-center ">65</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">65</td>
+                </tr>
+                <tr class=" person-row" data-name="воробьев александр" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">17</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Воробьев Александр</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1981</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">63</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">63</td>
+                </tr>
+                <tr class=" person-row" data-name="федоришкин вячеслав" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">18</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Федоришкин Вячеслав</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1983</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">62</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">62</td>
+                </tr>
+                <tr class=" person-row" data-name="алексеева анна" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">19</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Алексеева Анна</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1984</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">59</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">59</td>
+                </tr>
+                <tr class=" person-row" data-name="меркушкин георгий" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">20</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Меркушкин Георгий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1977</td>
+                  <td class="px-3 py-3 text-center score-mid-low">57</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">57</td>
+                </tr>
+                <tr class=" person-row" data-name="иванов юрий" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">21</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иванов Юрий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1975</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">55</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">55</td>
+                </tr>
+                <tr class=" person-row" data-name="алексеев дмитрий" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">22</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Алексеев Дмитрий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1985</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">51</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">51</td>
+                </tr>
+                <tr class=" person-row" data-name="шкиренко иван" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">23</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Шкиренко Иван</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2011</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">48</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">48</td>
+                </tr>
+                <tr class=" person-row" data-name="иголкин семён" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">24</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иголкин Семён</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2011</td>
+                  <td class="px-3 py-3 text-center score-mid-low">48</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">48</td>
+                </tr>
+                <tr class=" person-row" data-name="иванов егор" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">25</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иванов Егор</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2009</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">47</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">47</td>
+                </tr>
+                <tr class=" person-row" data-name="леонов владимир" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">26</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Леонов Владимир</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1993</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">46</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">46</td>
+                </tr>
+                <tr class=" person-row" data-name="гришмановский михаил" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">27</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Гришмановский Михаил</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2005</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="михайлов дмитрий" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">28</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Михайлов Дмитрий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1989</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="соколовский александр" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">29</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Соколовский Александр</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1981</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="федоров максим" data-group="МА">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">30</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">ФЕДОРОВ МАКСИМ</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1976</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="group-section" data-group="МБ">
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900">Мужчины группа Б (МБ)</h2>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800">22 участников</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-slate-600">
+                  <th class="px-4 py-3.5 text-left font-bold w-14">Место</th>
+                  <th class="px-4 py-3.5 text-left font-bold min-w-[180px]">Фамилия Имя</th>
+                  <th class="px-3 py-3.5 text-center font-bold">Г.р.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">1 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">2 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">3 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">4 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold">5 эт.</th>
+                  <th class="px-3 py-3.5 text-center font-bold stage6-header">6 эт.</th>
+                  <th class="px-4 py-3.5 text-center font-bold bg-blue-50 text-blue-800">Сумма<br><span class="text-xs font-normal opacity-70">5 эт.</span></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+
+                <tr class="medal-1 person-row" data-name="матвеев кирилл" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥇</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Матвеев Кирилл</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2012</td>
+                  <td class="px-3 py-3 text-center ">81</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">84</td>
+                  <td class="px-3 py-3 text-center ">90</td>
+                  <td class="px-3 py-3 text-center ">91</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">446</td>
+                </tr>
+                <tr class="medal-2 person-row" data-name="ермолаев владислав" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥈</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Ермолаев Владислав</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center ">81</td>
+                  <td class="px-3 py-3 text-center ">89</td>
+                  <td class="px-3 py-3 text-center ">74</td>
+                  <td class="px-3 py-3 text-center ">81</td>
+                  <td class="px-3 py-3 text-center score-high">97</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">421</td>
+                </tr>
+                <tr class="medal-3 person-row" data-name="вавере даниэль" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">🥉</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Вавере Даниэль</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">92</td>
+                  <td class="px-3 py-3 text-center ">94</td>
+                  <td class="px-3 py-3 text-center ">65</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">351</td>
+                </tr>
+                <tr class=" person-row" data-name="зворыкин иван" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">4</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Зворыкин Иван</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center ">78</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center ">63</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">342</td>
+                </tr>
+                <tr class=" person-row" data-name="петроченко артём" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">5</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Петроченко Артём</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2012</td>
+                  <td class="px-3 py-3 text-center ">74</td>
+                  <td class="px-3 py-3 text-center ">69</td>
+                  <td class="px-3 py-3 text-center ">80</td>
+                  <td class="px-3 py-3 text-center ">76</td>
+                  <td class="px-3 py-3 text-center score-low">24</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">323</td>
+                </tr>
+                <tr class=" person-row" data-name="алексеев константин" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">6</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Алексеев Константин</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2011</td>
+                  <td class="px-3 py-3 text-center ">93</td>
+                  <td class="px-3 py-3 text-center ">84</td>
+                  <td class="px-3 py-3 text-center ">75</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">48</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">300</td>
+                </tr>
+                <tr class=" person-row" data-name="иванов григорий" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">7</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иванов Григорий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2012</td>
+                  <td class="px-3 py-3 text-center score-mid-low">59</td>
+                  <td class="px-3 py-3 text-center ">64</td>
+                  <td class="px-3 py-3 text-center score-low">37</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">159</td>
+                </tr>
+                <tr class=" person-row" data-name="михайлов артём" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">8</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Михайлов Артём</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2012</td>
+                  <td class="px-3 py-3 text-center score-mid-low">59</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">100</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">159</td>
+                </tr>
+                <tr class=" person-row" data-name="федоров андрей" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">9</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">ФЕДОРОВ АНДРЕЙ</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-high">96</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">96</td>
+                </tr>
+                <tr class=" person-row" data-name="баранов александр" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">10</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Баранов Александр</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2011</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">86</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">86</td>
+                </tr>
+                <tr class=" person-row" data-name="рытиков сергей" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">11</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Рытиков Сергей</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1985</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">83</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">83</td>
+                </tr>
+                <tr class=" person-row" data-name="лемачко ярослав" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">12</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Лемачко Ярослав</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2012</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">80</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">80</td>
+                </tr>
+                <tr class=" person-row" data-name="иванова ярослава" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">13</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Иванова Ярослава</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2015</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">73</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">73</td>
+                </tr>
+                <tr class=" person-row" data-name="левин григорий" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">14</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Левин Григорий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1959</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">61</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">61</td>
+                </tr>
+                <tr class=" person-row" data-name="воробьев даниил" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">15</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Воробьев Даниил</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center ">60</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">60</td>
+                </tr>
+                <tr class=" person-row" data-name="каллас елена" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">16</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Каллас Елена</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1990</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">59</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">59</td>
+                </tr>
+                <tr class=" person-row" data-name="бабиков захар" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">17</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Бабиков Захар</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2012</td>
+                  <td class="px-3 py-3 text-center score-mid-low">56</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">56</td>
+                </tr>
+                <tr class=" person-row" data-name="творонович евгений" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">18</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Творонович Евгений</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1986</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-mid-low">52</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">52</td>
+                </tr>
+                <tr class=" person-row" data-name="попов никита" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">19</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Попов Никита</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center score-low">39</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">39</td>
+                </tr>
+                <tr class=" person-row" data-name="творонович валерий" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">20</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Творонович Валерий</td>
+                  <td class="px-3 py-3 text-center text-slate-500">1957</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-low">33</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">33</td>
+                </tr>
+                <tr class=" person-row" data-name="новиков арсений" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">21</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Новиков Арсений</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2010</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+                <tr class=" person-row" data-name="огарев алексей" data-group="МБ">
+                  <td class="px-4 py-3 font-bold text-slate-500 text-center">22</td>
+                  <td class="px-4 py-3 font-semibold text-slate-900">Огарев Алексей</td>
+                  <td class="px-3 py-3 text-center text-slate-500">2013</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero">—</td>
+                  <td class="px-3 py-3 text-center score-zero stage6-col">—</td>
+                  <td class="px-4 py-3 text-center font-extrabold text-blue-700 sum-cell text-base">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="mt-16 mb-8 text-center">
+      <div class="inline-flex flex-col items-center gap-2 text-slate-400 text-sm">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+          Результаты после 5 этапов · Колонка 6 этапа готова
+        </div>
+        <p class="text-xs">Когда будут баллы 6 этапа — просто пришлите, обновлю таблицу и сумму</p>
+      </div>
+    </footer>
+  </main>
+
+<script>
+  const searchInput = document.getElementById('search');
+  const tabs = document.querySelectorAll('.group-tab');
+  const sections = document.querySelectorAll('.group-section');
+  let currentGroup = 'all';
+
+  function applyFilter() {
+    const q = searchInput.value.toLowerCase().trim();
+    sections.forEach(sec => {
+      const g = sec.dataset.group;
+      const showByGroup = currentGroup === 'all' || currentGroup === g;
+      let hasMatch = false;
+      sec.querySelectorAll('.person-row').forEach(row => {
+        const match = !q || row.dataset.name.includes(q);
+        row.style.display = match ? '' : 'none';
+        if (match) hasMatch = true;
+      });
+      const show = showByGroup && (hasMatch || !q);
+      sec.style.display = show ? '' : 'none';
+    });
+  }
+
+  searchInput.addEventListener('input', applyFilter);
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => {
+        t.classList.remove('active', 'bg-blue-600', 'text-white');
+        t.classList.add('bg-slate-100', 'text-slate-700');
+      });
+      tab.classList.add('active', 'bg-blue-600', 'text-white');
+      tab.classList.remove('bg-slate-100', 'text-slate-700');
+      currentGroup = tab.dataset.group;
+      applyFilter();
+    });
+  });
+</script>
+</body>
+</html>
